@@ -43,3 +43,7 @@ The prefix key is bound to the default of `ctrl-b`.
 - `fo [words]` - Fuzzy search for files matching `words`. Open in editor.
 - `fr [words]` - Like `fo`, but for the current git repository
 - `fh [words]` - Search command history
+
+## Credit
+
+Heavily-based off of https://github.com/dimfeld/dotfiles
