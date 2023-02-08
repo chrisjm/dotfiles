@@ -1,0 +1,24 @@
+[init]
+	defaultBranch = main
+
+# Include local file that shouldn't be replicated between servers
+[include]
+  path = ~/.gitconfig.local
+
+[commit]
+	verbose = true
+
+[diff]
+  colorMoved = default
+
+[push]
+	default = simple
+	autoSetupRemote = true
+
+[pull]
+	rebase = false
+	ff = only
+
+[user]
+	name = Chris J Mears
+	email = chris.mears@gmail.com
