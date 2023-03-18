@@ -184,3 +184,4 @@ setopt auto_pushd
 
 # Better autocompletion
 autoload -Uz compinit && compinit
+export PATH="/usr/local/opt/node@16/bin:/usr/local/Cellar/ruby/3.2.0/bin:$PATH"

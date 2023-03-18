@@ -7,12 +7,17 @@ alias ig="sk -i --ansi -c 'rg --color=always --line-number "{}"'"
 alias j="just"
 alias l='exa -l --git'
 alias ls='exa'
+alias ll='l'
+alias la='exa -la --git'
 alias mv='mv -iv'
 alias py3env='source ~/py3env/bin/activate'
 alias rg='rg -S'
 alias rm='rm -iv'
 alias scp='scp -C'
 alias vi='nvim'
+alias vim='nvim'
+alias rc='source ~/.zshenv && source ~/.zshrc'
+alias ec='code ~/dotfiles'
 
 export BIND_IP=0.0.0.0
 export EDITOR=nvim
