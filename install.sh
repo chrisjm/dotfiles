@@ -14,10 +14,10 @@ fi
 
 if [[ `which cargo` ]]; then
   # Prefer cargo for rust utils, if it's installed
-  cargo install bat cargo-update exa git-delta ripgrep starship zoxide
+  cargo install bat cargo-update exa git-delta ripgrep zoxide
 
   if [[ `which brew` ]]; then
-    brew install fzf nvim stow
+    brew install fzf nvim stow starship
   elif [[ `which apt` ]]; then
     sudo apt install nvim stow
     echo 'Installing fzf'
