@@ -19,6 +19,17 @@ alias vim='nvim'
 alias rc='source ~/.zshenv && source ~/.zshrc'
 alias ec='code ~/dotfiles'
 
+# Aviator CLI
+alias avpr='av pr create'
+alias avb='av stack branch'
+alias avbc='av stack branch-commit'
+alias avc='av commit'
+alias avs='av stack'
+alias avco='av stack switch'
+alias avsync='av stack sync --prune'
+alias avsub='av stack submit'
+alias avadopt='av stack sync --parent master'
+
 export BIND_IP=0.0.0.0
 export EDITOR=nvim
 export GIT_CEILING_DIRECTORIES=~
@@ -42,4 +53,5 @@ function fn() {
 function mcd() {
     mkdir -pv ${1} && cd ${1}
 }
+
 
