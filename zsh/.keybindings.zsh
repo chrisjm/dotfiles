@@ -6,7 +6,6 @@ function zle-line-init zle-keymap-select {
     zle reset-prompt
 }
 
-zle
 zle -N zle-line-init
 zle -N zle-keymap-select
 
@@ -38,9 +37,6 @@ bindkey "^[[3~" vi-delete-char
 bindkey '^w' backward-kill-word
 bindkey '^u' backward-kill-line
 bindkey '^k' kill-line
-
-# ctrl-r starts searching history backward
-bindkey '^r' history-incremental-search-backward
 
 bindkey '^[b' backward-word
 bindkey '^[f' forward-word

@@ -19,7 +19,7 @@ fi
 # --- CLI tools --------------------------------------------------------------
 # fd + ripgrep + fzf + zoxide power the find commands in .zshrc.
 FIND_TOOLS=(fd ripgrep fzf zoxide)
-EXTRA_TOOLS=(bat starship stow neovim)
+EXTRA_TOOLS=(bat eza starship stow neovim uv)
 
 if command -v brew >/dev/null 2>&1; then
   brew install "${FIND_TOOLS[@]}" "${EXTRA_TOOLS[@]}"
@@ -37,10 +37,20 @@ elif command -v apt >/dev/null 2>&1; then
       ln -sf "$(command -v "$src")" ~/.local/bin/"$dest"
     fi
   done
+
+  # eza isn't packaged on every Debian/Ubuntu release; fall back to cargo.
+  if ! command -v eza >/dev/null 2>&1; then
+    if ! sudo apt install -y eza 2>/dev/null; then
+      command -v cargo >/dev/null 2>&1 && cargo install eza || echo "warning: could not install eza"
+    fi
+  fi
 else
   echo "No supported package manager (brew or apt) found." >&2
   echo "Install fd, ripgrep, fzf, and zoxide manually." >&2
 fi
+
+# uv (Python toolchain), for systems whose package manager lacks it.
+command -v uv >/dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # --- Neovim plugins ---------------------------------------------------------
 python3 -m pip install --user --upgrade pynvim \

@@ -113,10 +113,6 @@ function delete-branches() {
     xargs --no-run-if-empty git branch --delete --force
 }
 
-# export MANPATH="/usr/local/man:$MANPATH"
-
-fpath+=~/.zsh-functions
-
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -158,8 +154,8 @@ zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:git-switch:*' sort false
 # Enable completion list colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-# preview directory's content with exa when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+# preview directory's content with eza when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 #
 # Do preview in tmux popup when available
 # zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
@@ -183,15 +179,9 @@ elif [ -f ~/.fzf.zsh ]; then
   source ~/.fzf.zsh
 fi
 
-[ -f ~/llm-aliases.zsh ] && source ~/llm-aliases.zsh
-
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
-
-# Use this if it's defined in the local file
-export DN_DISCORD_WEBHOOK=${DISCORD_WEBHOOK}
-
-export PRETTIERD_LOCAL_PRETTIER_ONLY=true
+command -v uv >/dev/null 2>&1 && eval "$(uv generate-shell-completion zsh)"
 
 setopt auto_pushd
 
@@ -226,62 +216,24 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
-# Automatically activate Python virtual environment when entering a directory
-function activate_venv() {
-    # Check for virtual environments in common locations
-    local venv_dirs=("venv" ".venv" "env")
-    for dir in "${venv_dirs[@]}"; do
-        if [[ -d "$dir" && -f "$dir/bin/activate" ]]; then
-            # Deactivate any existing virtual environment
-            if [[ -n "$VIRTUAL_ENV" ]]; then
-                deactivate
-            fi
-
-            # Activate the new virtual environment
-            source "$dir/bin/activate"
-            return 0
-        fi
-    done
-
-    # If no virtual environment is found and we're in one, deactivate it
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-        deactivate
-    fi
-}
-
-# Hook the function to run on directory changes
-chpwd_functions+=('activate_venv')
-
-# PHP Laraval Sail
-alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
-
 # pnpm
-export PNPM_HOME="/Users/chris/Library/pnpm"
+if [[ "$(uname)" == Darwin ]]; then
+  export PNPM_HOME="$HOME/Library/pnpm"
+else
+  export PNPM_HOME="$HOME/.local/share/pnpm"
+fi
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
-[[ -s "$HOME/.avn/bin/avn.sh" ]] && source "$HOME/.avn/bin/avn.sh" # load avn
-
-export PATH="\
-$HOME/bin/override:\
-$HOME/bin:\
-$HOME/bin/fzf/bin:\
-$HOME/.local/bin:\
-$HOME/.cargo/bin:\
-$HOME/google-cloud-sdk/bin:\
-/usr/local/go/bin:\
-/usr/local/opt/node@16/bin:\
-/usr/local/opt/ruby@3.2/bin:\
-/usr/local/opt/ruby/bin:\
-/usr/local/bin:\
-/usr/local/sbin:\
-/usr/bin:\
-/usr/sbin:\
-/bin:\
-/sbin:\
-/snap/bin:\
-$PATH\
-"
+# zsh's `path` array is the source of truth; PATH follows it.
+# typeset -U dedupes, so re-sourcing is safe.
+typeset -U path
+path=(
+  "$HOME/bin"
+  "$HOME/.local/bin"
+  "$HOME/.cargo/bin"
+  $path
+)
