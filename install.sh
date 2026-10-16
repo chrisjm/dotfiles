@@ -51,9 +51,3 @@ fi
 
 # uv (Python toolchain), for systems whose package manager lacks it.
 command -v uv >/dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# --- Neovim plugins ---------------------------------------------------------
-python3 -m pip install --user --upgrade pynvim \
-  || echo "warning: could not install pynvim (neovim python provider may need manual setup)"
-nvim +PlugInstall +qall
-nvim +UpdateRemotePlugins +qall

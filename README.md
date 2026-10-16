@@ -11,9 +11,9 @@ Personal dotfiles for **macOS** and **Linux (including WSL)**, managed with
 
 To use only part of the config, stow a single directory instead, e.g. `stow -R zsh`.
 
-`install.sh` detects Homebrew or apt and installs the CLI tools below, then
-installs the Neovim plugins. On apt-based systems it symlinks `fdfind`→`fd` and
-`batcat`→`bat`, which is what the shell config expects.
+`install.sh` detects Homebrew or apt and installs the CLI tools below. On
+apt-based systems it symlinks `fdfind`→`fd` and `batcat`→`bat`, which is what
+the shell config expects.
 
 ## Finding things
 
@@ -48,8 +48,9 @@ The core workflow is fuzzy-finding files, paths, and contents:
 
 ## Neovim
 
-Neovim is kept to sensible defaults for occasional editing. `EDITOR` and
-`VISUAL` both point at `nvim`.
+Stock Neovim with a small set of editor defaults — line numbers, 4-space
+indent (EditorConfig overrides per project), system clipboard, and persistent
+undo — and no plugins. `EDITOR` and `VISUAL` both point at `nvim`.
 
 ## tmux
 
@@ -59,3 +60,8 @@ Prefix is `Ctrl-b`.
 - `Prefix s` / `Prefix v` – split horizontal / vertical
 - `Prefix z` – maximize / restore pane
 - `Prefix h/j/k/l` – move between panes
+
+## Design notes
+
+The principles behind this repo, and the things not to reintroduce, live in
+[`AGENTS.md`](./AGENTS.md).
