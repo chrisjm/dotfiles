@@ -19,7 +19,7 @@ fi
 # --- CLI tools --------------------------------------------------------------
 # fd + ripgrep + fzf + zoxide power the find commands in .zshrc.
 FIND_TOOLS=(fd ripgrep fzf zoxide)
-EXTRA_TOOLS=(bat eza starship stow neovim uv)
+EXTRA_TOOLS=(bat eza starship stow neovim)
 
 if command -v brew >/dev/null 2>&1; then
   brew install "${FIND_TOOLS[@]}" "${EXTRA_TOOLS[@]}"
