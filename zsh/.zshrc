@@ -106,8 +106,6 @@ function delete-branches() {
     xargs --no-run-if-empty git branch --delete --force
 }
 
-export PATH="$HOME/google-cloud-sdk/bin:$HOME/bin/override:/usr/local/bin:/usr/local/sbin:/usr/local/share/python:$HOME/.cargo/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/snap/bin:$HOME/bin/fzf/bin:$HOME/bin:$HOME/.local/bin"
-
 # export MANPATH="/usr/local/man:$MANPATH"
 
 fpath+=~/.zsh-functions
@@ -171,6 +169,7 @@ source ~/.keybindings.zsh
 
 [ -f ~/.zprofile ] && source ~/.zprofile
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/llm-aliases.zsh ] && source ~/llm-aliases.zsh
 
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
@@ -184,4 +183,91 @@ setopt auto_pushd
 
 # Better autocompletion
 autoload -Uz compinit && compinit
-export PATH="/usr/local/opt/node@16/bin:/usr/local/Cellar/ruby/3.2.0/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+# https://github.com/nvm-sh/nvm#zsh
+autoload -U add-zsh-hook
+
+load-nvmrc() {
+  local nvmrc_path
+  nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version
+    nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+      nvm use
+    fi
+  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+
+# Automatically activate Python virtual environment when entering a directory
+function activate_venv() {
+    # Check for virtual environments in common locations
+    local venv_dirs=("venv" ".venv" "env")
+    for dir in "${venv_dirs[@]}"; do
+        if [[ -d "$dir" && -f "$dir/bin/activate" ]]; then
+            # Deactivate any existing virtual environment
+            if [[ -n "$VIRTUAL_ENV" ]]; then
+                deactivate
+            fi
+
+            # Activate the new virtual environment
+            source "$dir/bin/activate"
+            return 0
+        fi
+    done
+
+    # If no virtual environment is found and we're in one, deactivate it
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        deactivate
+    fi
+}
+
+# Hook the function to run on directory changes
+chpwd_functions+=('activate_venv')
+
+# PHP Laraval Sail
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
+
+# pnpm
+export PNPM_HOME="/Users/chris/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+[[ -s "$HOME/.avn/bin/avn.sh" ]] && source "$HOME/.avn/bin/avn.sh" # load avn
+
+export PATH="\
+$HOME/bin/override:\
+$HOME/bin:\
+$HOME/bin/fzf/bin:\
+$HOME/.local/bin:\
+$HOME/.cargo/bin:\
+$HOME/google-cloud-sdk/bin:\
+/usr/local/go/bin:\
+/usr/local/opt/node@16/bin:\
+/usr/local/opt/ruby@3.2/bin:\
+/usr/local/opt/ruby/bin:\
+/usr/local/bin:\
+/usr/local/sbin:\
+/usr/bin:\
+/usr/sbin:\
+/bin:\
+/sbin:\
+/snap/bin:\
+$PATH\
+"

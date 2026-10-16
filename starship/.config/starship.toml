@@ -1,5 +1,6 @@
-format="""$git_state$git_branch$hostname$python$git_status$cmd_duration
+format = """$git_state$git_branch$hostname$python$git_status$cmd_duration
 $status$directory$character"""
+command_timeout=2000
 
 [directory]
 fish_style_pwd_dir_length = 3
@@ -23,3 +24,7 @@ behind = "↓${count}"
 untracked = "U"
 modified = "M"
 style = "red"
+
+[python]
+pyenv_version_name = true
+
