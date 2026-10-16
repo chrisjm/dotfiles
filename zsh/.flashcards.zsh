@@ -7,12 +7,14 @@
 
 typeset -ga FLASHCARDS=(
   "z <name>|jump to a frecent directory (zoxide)"
-  "fz|fuzzy-pick a tracked directory and cd into it"
+  "zi|interactive zoxide picker: fuzzy-find a tracked directory and cd into it"
   "fo|fuzzy-pick a file, preview it, open in \$EDITOR"
   "fr|like fo, scoped to the current git repository"
   "fgr|ripgrep a pattern, pick a hit, open at that line"
   "fh|fuzzy-search your command history"
   "fgb|fuzzy-checkout one of the 30 most recent branches"
+  "ftm [name]|fuzzy-pick a tmux session to attach/switch, or create it if absent"
+  "ftmk [name]|fuzzy-pick a tmux session to kill"
   "fn <text>|find files by name under the current tree"
   "mcd <dir>|make a directory and cd into it"
   "cdgr|cd to the root of the current git repository"

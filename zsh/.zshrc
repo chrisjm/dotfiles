@@ -43,13 +43,6 @@ fh() {
   print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]* *//')
 }
 
-# fz - fuzzy-find a directory tracked by zoxide and cd into it
-fz() {
-  local dir
-  dir=$(zoxide query --list 2>/dev/null | fzf --query="$1" --exit-0) || return
-  [[ -n "$dir" ]] && cd "$dir"
-}
-
 # fbr [FUZZY PATTERN] - Checkout specified branch
 # Include remote branches, sorted by most recent commit and limited to 30
 fgb() {
@@ -116,15 +109,6 @@ function delete-branches() {
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
-  export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
-  [ -f ~/.iterm2_shell_integration.zsh ] && source ~/.iterm2_shell_integration.`basename $SHELL`
-fi
-
-iterm2_print_user_vars() {
-  it2git
-}
-
 SAVEHIST=10000
 HISTSIZE=10000
 HISTFILE=~/.zsh_history
@@ -138,17 +122,11 @@ fi
 # Must go before zsh-syntax-highlighting
 autoload -U select-word-style && select-word-style bash
 
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=30
-ZSH_AUTOSUGGEST_USE_ASYNC=1
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 zplug "plugins/ssh-agent", from:oh-my-zsh
 zplug "plugins/git", from:oh-my-zsh
 zplug "Aloxaf/fzf-tab", defer:2
 zplug "zsh-users/zsh-syntax-highlighting", defer:3
-# zplug "zsh-users/zsh-autosuggestions", defer:3
 
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:git-switch:*' sort false
@@ -224,18 +202,6 @@ load-nvmrc() {
 
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
-
-# pnpm
-if [[ "$(uname)" == Darwin ]]; then
-  export PNPM_HOME="$HOME/Library/pnpm"
-else
-  export PNPM_HOME="$HOME/.local/share/pnpm"
-fi
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
 
 # zsh's `path` array is the source of truth; PATH follows it.
 # typeset -U dedupes, so re-sourcing is safe.

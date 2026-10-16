@@ -42,5 +42,3 @@ bindkey '^[b' backward-word
 bindkey '^[f' forward-word
 bindkey '^E' end-of-line
 bindkey '^A' beginning-of-line
-
-bindkey '^ ' autosuggest-accept

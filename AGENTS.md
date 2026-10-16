@@ -22,8 +22,9 @@ learning a large toolset.
 - **`uv` owns Python.** No virtualenv-activation hooks; `uv run` / `uv sync`
   manage environments.
 - **Delete over accumulate.** Remove dead config rather than commenting it out.
-- **Deferred, not forbidden.** tmux and remote/SSH work are parked until
-  there's a real need.
+- **Deferred, not forbidden.** Remote/SSH work is parked until there's a real
+  need. tmux helpers (`ftm`, `ftmk`) exist and are documented; keep them
+  lightweight and don't expand the tmux config without a reason.
 
 ## Layout
 

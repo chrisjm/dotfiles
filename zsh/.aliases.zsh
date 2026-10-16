@@ -30,8 +30,10 @@ else
    alias egrep='egrep --color=auto'
 fi
 
-function fn() {
-    find . -iname "*${*}*" | grep -v "~"
+# fn <text> - find files by name under the current tree (fd-powered)
+# Skips .git and node_modules: both are large and rarely worth searching.
+fn() {
+  fd --hidden --exclude '*~' --exclude .git --exclude node_modules "$*"
 }
 
 function mcd() {

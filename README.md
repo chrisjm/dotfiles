@@ -13,7 +13,20 @@ To use only part of the config, stow a single directory instead, e.g. `stow -R z
 
 `install.sh` detects Homebrew or apt and installs the CLI tools below. On
 apt-based systems it symlinks `fdfind`→`fd` and `batcat`→`bat`, which is what
-the shell config expects.
+the shell config expects. On macOS the Rust-based tools (bat, eza, fd, delta,
+ripgrep, zoxide, starship) are built with the rustup toolchain, because EOL
+macOS releases have no Homebrew bottles and would otherwise compile from
+source under Homebrew anyway.
+
+It also bootstraps the language runtimes:
+
+- **Rust** – rustup, with the minimal profile (`cargo`, `rustc`, `std`).
+- **Node** – [nvm](https://github.com/nvm-sh/nvm) from the official install
+  script, then the current LTS release. `nvm` is the cross-platform default;
+  do not install it from Homebrew.
+
+R is installed manually per platform (see below), because the right source
+differs by system and the packages are large.
 
 ## Finding things
 
@@ -22,12 +35,12 @@ The core workflow is fuzzy-finding files, paths, and contents:
 - **`fd`** – fast file finder (`find` replacement)
 - **`ripgrep` (`rg`)** – fast content search
 - **`fzf`** – fuzzy picker. Binds `Ctrl-R` (history), `Ctrl-T` (files), `Alt-C` (cd)
-- **`zoxide` (`z`)** – jump to frecent directories
+- **`zoxide`** – `z <name>` jumps to a frecent directory; `zi` opens the interactive picker
 
 | Command    | Does                                                      |
 | ---------- | --------------------------------------------------------- |
 | `z <name>` | jump to a frecent directory                               |
-| `fz`       | fuzzy-pick a tracked directory and `cd`                   |
+| `zi`       | interactive zoxide picker: fuzzy-find a tracked dir, `cd` |
 | `fo`       | fuzzy-pick a file, preview it, open in `$EDITOR`          |
 | `fr`       | like `fo`, scoped to the current git repository           |
 | `fgr`      | ripgrep content search → pick → open at the matching line |
@@ -39,6 +52,20 @@ The core workflow is fuzzy-finding files, paths, and contents:
 - `eza` instead of `ls`
 - `bat` instead of `cat`
 - `uv` for Python environments and dependencies
+- `nvm` for Node versions; `nvm install --lts` and `nvm use`
+
+## R and data science
+
+R is installed manually, per platform, because the packages are large and the
+right source differs by system:
+
+- **macOS (Homebrew):** `brew install r`, then install the packages from CRAN:
+  `Rscript -e 'install.packages("tidyverse")'`
+- **Debian/Ubuntu:** `sudo apt install r-base`, then
+  `sudo apt install r-cran-tidyverse` (binary, no compiling)
+
+This keeps `install.sh` from dragging a large, compile-heavy toolchain into a
+fresh setup. Add more packages as needed.
 
 ## Shell helpers
 
@@ -70,6 +97,12 @@ Prefix is `Ctrl-b`.
 - `Prefix s` / `Prefix v` – split horizontal / vertical
 - `Prefix z` – maximize / restore pane
 - `Prefix h/j/k/l` – move between panes
+
+Session helpers from the shell:
+
+- `ftm [name]` – fuzzy-pick a tmux session to attach or switch to; with a name,
+  switch to it or create it if it doesn't exist
+- `ftmk [name]` – fuzzy-pick a tmux session to kill
 
 ## Design notes
 
