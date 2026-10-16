@@ -25,7 +25,7 @@ _fzf_compgen_dir() {
 #   - Exit if there's no match (--exit-0)
 fo() {
   local files
-  IFS=$'\n' files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0 --preview 'bat --style=numbers --color=always --line-range :500 {}'))
+  IFS=$'\n' files=($(fzf --query="$1" --multi --select-1 --exit-0 --preview 'bat --style=numbers --color=always --line-range :500 {}'))
   [[ -n "$files" ]] && ${EDITOR:-nvim} "${files[@]}"
 }
 
@@ -34,13 +34,20 @@ fo() {
 #   - Exit if there's no match (--exit-0)
 fr() {
   local files
-  IFS=$'\n' files=($(fd --type f --search-path $(git rev-parse --show-toplevel) | fzf-tmux --query="$1" --multi --select-1 --exit-0 --preview 'bat --style=numbers --color=always --line-range :500 {}'))
+  IFS=$'\n' files=($(fd --type f --search-path $(git rev-parse --show-toplevel) | fzf --query="$1" --multi --select-1 --exit-0 --preview 'bat --style=numbers --color=always --line-range :500 {}'))
   [[ -n "$files" ]] && ${EDITOR:-nvim} "${files[@]}"
 }
 
 # fh [FUZZY PATTERN] - Search in command history
 fh() {
   print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]* *//')
+}
+
+# fz - fuzzy-find a directory tracked by zoxide and cd into it
+fz() {
+  local dir
+  dir=$(zoxide query --list 2>/dev/null | fzf --query="$1" --exit-0) || return
+  [[ -n "$dir" ]] && cd "$dir"
 }
 
 # fbr [FUZZY PATTERN] - Checkout specified branch
@@ -55,7 +62,7 @@ fgb() {
 
   branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
   branch=$(echo "$branches" |
-    fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m "$query" ) &&
+    fzf +m "$query" ) &&
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 
@@ -168,7 +175,14 @@ source ~/.aliases.zsh
 source ~/.keybindings.zsh
 
 [ -f ~/.zprofile ] && source ~/.zprofile
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# fzf key bindings + completion (works with brew, apt, and git installs)
+if command -v fzf >/dev/null 2>&1 && fzf --zsh >/dev/null 2>&1; then
+  source <(fzf --zsh)
+elif [ -f ~/.fzf.zsh ]; then
+  source ~/.fzf.zsh
+fi
+
 [ -f ~/llm-aliases.zsh ] && source ~/llm-aliases.zsh
 
 eval "$(zoxide init zsh)"

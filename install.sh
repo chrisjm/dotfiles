@@ -1,38 +1,49 @@
 #!/bin/bash
-set -x
+# Installs the CLI tools and plugin managers this dotfiles repo depends on.
+# Supports macOS (Homebrew) and Debian/Ubuntu (apt, including WSL).
+set -euo pipefail
 
-mkdir -p ~/bin
+mkdir -p ~/bin ~/.local/bin
 
-echo "Installing zplug"
-curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+# --- plugin managers --------------------------------------------------------
+if [[ ! -d ~/.zplug ]]; then
+  echo "Installing zplug"
+  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+fi
 
-echo "Installing tmux plugin manager"
-mkdir -p ~/.tmux/plugins
 if [[ ! -d ~/.tmux/plugins/tpm ]]; then
+  echo "Installing tmux plugin manager"
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
-if [[ `which cargo` ]]; then
-  # Prefer cargo for rust utils, if it's installed
-  cargo install bat cargo-update exa git-delta ripgrep zoxide
+# --- CLI tools --------------------------------------------------------------
+# fd + ripgrep + fzf + zoxide power the find commands in .zshrc.
+FIND_TOOLS=(fd ripgrep fzf zoxide)
+EXTRA_TOOLS=(bat starship stow neovim)
 
-  if [[ `which brew` ]]; then
-    brew install fzf nvim stow starship
-  elif [[ `which apt` ]]; then
-    sudo apt install nvim stow
-    echo 'Installing fzf'
-    ./install_fzf.sh
-  fi
-elif [[ `which brew ` ]]; then
-  brew install bat exa git-delta ripgrep starship fzf stow nvim zoxide
-elif [[ `which apt ` ]]; then
-  echo 'Installing starship'
-  curl -fsSL https://starship.rs/install.sh | bash
-  echo 'Installing fzf'
-  ./install_fzf.sh
-  sudo apt install bat exa git-delta ripgrep stow nvim zoxide
+if command -v brew >/dev/null 2>&1; then
+  brew install "${FIND_TOOLS[@]}" "${EXTRA_TOOLS[@]}"
+elif command -v apt >/dev/null 2>&1; then
+  # Debian/Ubuntu package names differ from upstream.
+  sudo apt update
+  sudo apt install -y fd-find ripgrep fzf zoxide bat stow neovim
+
+  # ...and two of the binaries are renamed. Symlink the names .zshrc expects
+  # into ~/.local/bin, which is already on PATH.
+  for pair in fdfind:fd batcat:bat; do
+    src=${pair%%:*}
+    dest=${pair##*:}
+    if command -v "$src" >/dev/null 2>&1; then
+      ln -sf "$(command -v "$src")" ~/.local/bin/"$dest"
+    fi
+  done
+else
+  echo "No supported package manager (brew or apt) found." >&2
+  echo "Install fd, ripgrep, fzf, and zoxide manually." >&2
 fi
 
-python3 -m pip install --user --upgrade pynvim
+# --- Neovim plugins ---------------------------------------------------------
+python3 -m pip install --user --upgrade pynvim \
+  || echo "warning: could not install pynvim (neovim python provider may need manual setup)"
 nvim +PlugInstall +qall
 nvim +UpdateRemotePlugins +qall
