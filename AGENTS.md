@@ -34,6 +34,8 @@ Each top-level directory is a Stow package that mirrors the target layout:
 
 - `install.sh` installs tools (Homebrew on macOS, apt on Debian/Ubuntu).
 - Shell config lives in `zsh/.zshrc`, with aliases and keybindings split out.
+- `zsh/.flashcards.zsh` is the curated command list behind `flash`; keep it in
+  sync when you add or remove a command.
 - Neovim is intentionally plugin-free.
 
 ## Don't reintroduce
@@ -45,7 +47,8 @@ Each top-level directory is a Stow package that mirrors the target layout:
 
 ## Verifying changes
 
-- `zsh -n zsh/.zshrc zsh/.aliases.zsh zsh/.keybindings.zsh`
+- `zsh -n zsh/.zshrc zsh/.aliases.zsh zsh/.keybindings.zsh zsh/.flashcards.zsh`
 - `bash -n install.sh`
 - `nvim --headless -u nvim/.config/nvim/init.lua +qa`
+- After adding a file to a Stow package, re-link it: `stow -R <package>`
 - Open a fresh shell to confirm it loads.

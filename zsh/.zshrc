@@ -169,6 +169,7 @@ zplug load
 
 source ~/.aliases.zsh
 source ~/.keybindings.zsh
+[ -f ~/.flashcards.zsh ] && source ~/.flashcards.zsh
 
 [ -f ~/.zprofile ] && source ~/.zprofile
 
@@ -180,6 +181,14 @@ elif [ -f ~/.fzf.zsh ]; then
 fi
 
 eval "$(zoxide init zsh)"
+
+# Show a random command card when a new shell opens.
+# Set FLASH_QUIET=1 to skip it; won't repeat when `rc` re-sources this file.
+if (( ! ${+_FLASH_WELCOMED} )) && (( $+functions[flash] )) && [[ -z "$FLASH_QUIET" ]]; then
+  _FLASH_WELCOMED=1
+  flash
+fi
+
 eval "$(starship init zsh)"
 command -v uv >/dev/null 2>&1 && eval "$(uv generate-shell-completion zsh)"
 

@@ -46,6 +46,16 @@ The core workflow is fuzzy-finding files, paths, and contents:
 - `mcd <dir>` – make a directory and `cd` into it
 - `cdgr` – `cd` to the git root
 
+## Remembering commands
+
+`flash` surfaces the commands and aliases in this setup so you don't have to
+hold them all in your head:
+
+- `flash` – a random card
+- `flash <text>` – cards matching `<text>`
+- `flash -l` – list every card
+- `flash -q` – quiz yourself; the description shows first, the command on Enter
+
 ## Neovim
 
 Stock Neovim with a small set of editor defaults — line numbers, 4-space
