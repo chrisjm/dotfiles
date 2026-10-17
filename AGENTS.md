@@ -38,10 +38,13 @@ Each top-level directory is a Stow package that mirrors the target layout:
 - `zsh/.flashcards.zsh` is the curated command list behind `flash`; keep it in
   sync when you add or remove a command.
 - Neovim is intentionally plugin-free.
+- The Pi agent is installed by `install.sh`, but `~/.pi/agent` (keys, skills,
+  sessions) is configured manually and stays out of the repo.
 
 ## Don't reintroduce
 
-- Plugin managers or plugin stacks (vim-plug, coc, extra zplug add-ons).
+- Plugin managers or plugin stacks (vim-plug, coc, extra zplug add-ons, TPM /
+  tmux plugins).
 - Deprecated tools (exa instead of eza).
 - Hardcoded machine paths (`/Users/chris`, `node@16`, `/snap/bin`).
 - Aliases and config for tools that aren't in active use.

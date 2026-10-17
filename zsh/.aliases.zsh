@@ -15,7 +15,6 @@ alias vi='nvim'
 alias vim='nvim'
 alias rc='source ~/.zshenv && source ~/.zshrc'
 
-export BIND_IP=0.0.0.0
 export EDITOR=nvim
 export GIT_CEILING_DIRECTORIES=~
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"

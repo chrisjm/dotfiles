@@ -20,12 +20,18 @@ typeset -ga FLASHCARDS=(
   "cdgr|cd to the root of the current git repository"
   "delete-branches|fuzzy-pick local branches and delete them"
   "l / ll|long listing with eza (ll is an alias for l)"
-  "el|long listing with git status"
+  "el / la|long listing with git status (la includes hidden files)"
   "gd / gs|git diff / git status"
   "rg|ripgrep search (case-insensitive unless you type uppercase)"
+  "cat|runs bat: syntax-highlighted with line numbers"
+  "vi / vim|runs nvim"
+  "rm / cp / mv|aliased to -i: prompts before deleting/overwriting"
+  "scp|aliased to scp -C (compression enabled)"
+  "rc|re-source .zshenv + .zshrc after editing config"
   "Ctrl-R|fzf fuzzy history search"
   "Ctrl-T|fzf fuzzy file picker"
   "Alt-C|fzf fuzzy cd"
+  "delta|git diff/log -p are paged through delta; n/N jump between files"
 )
 
 _flash_card() {

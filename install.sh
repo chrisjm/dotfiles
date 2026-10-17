@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installs the CLI tools and plugin managers this dotfiles repo depends on.
+# Installs the CLI tools and runtimes this dotfiles repo depends on.
 # Supports macOS (Homebrew) and Debian/Ubuntu (apt, including WSL).
 set -euo pipefail
 
@@ -12,15 +12,10 @@ export HOMEBREW_NO_INSTALL_UPGRADE=1
 
 mkdir -p ~/bin ~/.local/bin
 
-# --- plugin managers --------------------------------------------------------
+# --- plugin manager ---------------------------------------------------------
 if [[ ! -d ~/.zplug ]]; then
   echo "Installing zplug"
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-fi
-
-if [[ ! -d ~/.tmux/plugins/tpm ]]; then
-  echo "Installing tmux plugin manager"
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
 # --- language runtimes ------------------------------------------------------
@@ -59,7 +54,7 @@ RUST_TOOLS=(bat:bat fd-find:fd eza:eza git-delta:delta ripgrep:rg zoxide:zoxide 
 # used only when no cargo is available.
 RUST_FORMULAE=(bat fd eza git-delta ripgrep zoxide starship)
 # Non-Rust tools that only the package manager provides.
-PACKAGE_TOOLS=(fzf stow neovim)
+PACKAGE_TOOLS=(fzf stow neovim gh tmux git-lfs)
 
 if command -v brew >/dev/null 2>&1; then
   if command -v cargo >/dev/null 2>&1; then
@@ -84,7 +79,7 @@ if command -v brew >/dev/null 2>&1; then
 elif command -v apt >/dev/null 2>&1; then
   # Debian/Ubuntu package names differ from upstream.
   sudo apt update
-  sudo apt install -y fd-find ripgrep fzf zoxide bat stow neovim
+  sudo apt install -y fd-find ripgrep fzf zoxide bat stow neovim zsh gh tmux git-lfs
 
   # ...and two of the binaries are renamed. Symlink the names .zshrc expects
   # into ~/.local/bin, which is already on PATH.
@@ -102,10 +97,32 @@ elif command -v apt >/dev/null 2>&1; then
       command -v cargo >/dev/null 2>&1 && cargo install --locked eza || echo "warning: could not install eza"
     fi
   fi
+
+  # starship and delta aren't packaged on Debian/Ubuntu: starship goes through
+  # its installer into ~/.local/bin (already on PATH), delta through cargo.
+  # Expect a few minutes of compiling on a fresh machine.
+  if ! command -v starship >/dev/null 2>&1; then
+    curl -sS https://starship.rs/install.sh | sh -s -- -y -b ~/.local/bin
+  fi
+  if ! command -v delta >/dev/null 2>&1 && command -v cargo >/dev/null 2>&1; then
+    cargo install --locked git-delta
+  fi
 else
   echo "No supported package manager (brew or apt) found." >&2
   echo "Install fd, ripgrep, fzf, and zoxide manually." >&2
 fi
 
+# Make zsh the login shell once it's installed (apt branch above adds it).
+# No-op on macOS where zsh is already the default.
+if command -v zsh >/dev/null 2>&1 && [[ $(basename "${SHELL:-}") != zsh ]]; then
+  echo "Setting login shell to zsh (may prompt for password)"
+  chsh -s "$(command -v zsh)"
+fi
+
 # uv (Python toolchain), for systems whose package manager lacks it.
 command -v uv >/dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Pi coding agent: installs to ~/.pi/agent, symlinks ~/bin/pi (already on
+# PATH). Needs Node >=22.19, provided by the nvm LTS installed above. API keys
+# and skills are configured manually afterwards.
+command -v pi >/dev/null 2>&1 || curl -LsSf https://pi.dev/install.sh | sh

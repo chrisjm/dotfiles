@@ -5,18 +5,24 @@ Personal dotfiles for **macOS** and **Linux (including WSL)**, managed with
 
 ## Installation
 
-1. Set your shell to zsh.
-2. Clone this repository.
-3. `cd dotfiles && ./install.sh && ./stow.sh -R`
+1. Clone this repository.
+2. `cd dotfiles && ./install.sh && ./stow.sh -R`
+3. Log out and back in if `install.sh` changed your login shell to zsh.
 
 To use only part of the config, stow a single directory instead, e.g. `stow -R zsh`.
+On WSL, a `BUG in find_stowed_path` warning means a symlink in `~` (e.g.
+`~/.aws`, `~/.azure`) points at an absolute `/mnt/c/...` path; `ln -sfn
+../../mnt/c/...` to make it relative and the warning goes away.
 
-`install.sh` detects Homebrew or apt and installs the CLI tools below. On
-apt-based systems it symlinks `fdfind`→`fd` and `batcat`→`bat`, which is what
-the shell config expects. On macOS the Rust-based tools (bat, eza, fd, delta,
-ripgrep, zoxide, starship) are built with the rustup toolchain, because EOL
-macOS releases have no Homebrew bottles and would otherwise compile from
-source under Homebrew anyway.
+`install.sh` detects Homebrew or apt and installs the CLI tools below
+(including `gh`, `tmux`, `git-lfs`, and `zsh` — it runs `chsh` if zsh isn't
+already your login shell). On apt-based systems it symlinks `fdfind`→`fd` and
+`batcat`→`bat`, which is what the shell config expects, and installs starship
+via its installer script and delta via cargo since neither is packaged. On
+macOS the Rust-based tools (bat, eza, fd, delta, ripgrep, zoxide, starship)
+are built with the rustup toolchain, because EOL macOS releases have no
+Homebrew bottles and would otherwise compile from source under Homebrew
+anyway.
 
 It also bootstraps the language runtimes:
 
@@ -51,6 +57,7 @@ The core workflow is fuzzy-finding files, paths, and contents:
 
 - `eza` instead of `ls`
 - `bat` instead of `cat`
+- `delta` as the git pager (`n`/`N` jump between files in a diff)
 - `uv` for Python environments and dependencies
 - `nvm` for Node versions; `nvm install --lts` and `nvm use`
 
@@ -103,6 +110,13 @@ Session helpers from the shell:
 - `ftm [name]` – fuzzy-pick a tmux session to attach or switch to; with a name,
   switch to it or create it if it doesn't exist
 - `ftmk [name]` – fuzzy-pick a tmux session to kill
+
+## AI tooling
+
+`install.sh` installs the [Pi](https://pi.dev) coding agent via its managed
+installer (`~/.pi/agent`, symlinked to `~/bin/pi`). Update it with `pi update`.
+API keys, skills, and extensions are configured manually after install — the
+Pi config directory is intentionally not part of this repo.
 
 ## Design notes
 

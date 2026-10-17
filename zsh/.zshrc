@@ -95,7 +95,7 @@ fgr() {
 
 # cd to git root
 cdgr() {
-  cd `gitroot`
+  cd "$(git rev-parse --show-toplevel)" || return
 }
 
 function delete-branches() {
@@ -103,7 +103,7 @@ function delete-branches() {
     grep --invert-match '\*' |
     cut -c 3- |
     fzf --multi --preview="git log {}" |
-    xargs --no-run-if-empty git branch --delete --force
+    while read -r branch; do git branch --delete --force "$branch"; done
 }
 
 # You may need to manually set your language environment
@@ -113,11 +113,6 @@ SAVEHIST=10000
 HISTSIZE=10000
 HISTFILE=~/.zsh_history
 setopt share_history
-
-if (( $+commands[tag] )); then
-  tag() { command tag "$@"; source ${TAG_ALIAS_FILE:-/tmp/tag_aliases} 2>/dev/null }
-  alias ag=tag
-fi
 
 # Must go before zsh-syntax-highlighting
 autoload -U select-word-style && select-word-style bash
