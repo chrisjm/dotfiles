@@ -12,12 +12,6 @@ export HOMEBREW_NO_INSTALL_UPGRADE=1
 
 mkdir -p ~/bin ~/.local/bin
 
-# --- plugin manager ---------------------------------------------------------
-if [[ ! -d ~/.zplug ]]; then
-  echo "Installing zplug"
-  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-fi
-
 # --- language runtimes ------------------------------------------------------
 # Rust: cargo builds the Rust-based CLI tools below. Use the minimal profile so
 # we get cargo/rustc/std without docs or the extra toolchain weight, and leave
@@ -110,6 +104,15 @@ elif command -v apt >/dev/null 2>&1; then
 else
   echo "No supported package manager (brew or apt) found." >&2
   echo "Install fd, ripgrep, fzf, and zoxide manually." >&2
+fi
+
+# --- plugin manager ---------------------------------------------------------
+# Runs after the package installs above: on a fresh Debian box zsh doesn't
+# exist until apt puts it there, and piping the installer to a missing zsh
+# aborts the script before gh and friends install.
+if command -v zsh >/dev/null 2>&1 && [[ ! -d ~/.zplug ]]; then
+  echo "Installing zplug"
+  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 fi
 
 # Make zsh the login shell once it's installed (apt branch above adds it).
