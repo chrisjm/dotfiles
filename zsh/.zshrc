@@ -1,3 +1,15 @@
+# zsh's `path` array is the source of truth; PATH follows it.
+# typeset -U dedupes, so re-sourcing is safe. Must come first: tools installed
+# to ~/.local/bin or ~/.cargo/bin (starship, uv, eza, ...) need to be
+# resolvable before the evals below run.
+typeset -U path
+path=(
+  "$HOME/bin"
+  "$HOME/.local/bin"
+  "$HOME/.cargo/bin"
+  $path
+)
+
 source ~/.zplug/init.zsh
 
 # ## FZF FUNCTIONS ##
@@ -183,13 +195,3 @@ load-nvmrc() {
 
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
-
-# zsh's `path` array is the source of truth; PATH follows it.
-# typeset -U dedupes, so re-sourcing is safe.
-typeset -U path
-path=(
-  "$HOME/bin"
-  "$HOME/.local/bin"
-  "$HOME/.cargo/bin"
-  $path
-)
