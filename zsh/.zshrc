@@ -1,10 +1,4 @@
-#set -x
-#zmodload zsh/zprof
-
 source ~/.zplug/init.zsh
-
-# User configuration
-#
 
 # ## FZF FUNCTIONS ##
 
@@ -40,10 +34,10 @@ fr() {
 
 # fh [FUZZY PATTERN] - Search in command history
 fh() {
-  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]* *//')
+  print -z $(fc -l 1 | fzf +s --tac | sed 's/ *[0-9]* *//')
 }
 
-# fbr [FUZZY PATTERN] - Checkout specified branch
+# fgb [FUZZY PATTERN] - Checkout specified branch
 # Include remote branches, sorted by most recent commit and limited to 30
 fgb() {
   local branches branch query
@@ -59,9 +53,9 @@ fgb() {
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 
-# tm [SESSION_NAME | FUZZY PATTERN] - create new tmux session, or switch to existing one.
-# Running `tm` will let you fuzzy-find a session mame
-# Passing an argument to `ftm` will switch to that session if it exists or create it otherwise
+# ftm [SESSION_NAME | FUZZY PATTERN] - create new tmux session, or switch to existing one.
+# Running `ftm` will let you fuzzy-find a session name
+# Passing an argument will switch to that session if it exists or create it otherwise
 ftm() {
   [[ -n "$TMUX" ]] && change="switch-client" || change="attach-session"
   if [ $1 ]; then
@@ -70,9 +64,9 @@ ftm() {
   session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) &&  tmux $change -t "$session" || echo "No sessions found."
 }
 
-# tm [SESSION_NAME | FUZZY PATTERN] - delete tmux session
-# Running `tm` will let you fuzzy-find a session mame to delete
-# Passing an argument to `ftm` will delete that session if it exists
+# ftmk [SESSION_NAME | FUZZY PATTERN] - delete tmux session
+# Running `ftmk` will let you fuzzy-find a session name to delete
+# Passing an argument will delete that session if it exists
 ftmk() {
   if [ $1 ]; then
     tmux kill-session -t "$1"; return
@@ -80,7 +74,7 @@ ftmk() {
   session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) &&  tmux kill-session -t "$session" || echo "No session found to delete."
 }
 
-# fuzzy grep via rg and open in vim with line number
+# fuzzy grep via rg and open in $EDITOR with line number
 fgr() {
   local file
   local line
@@ -106,9 +100,6 @@ function delete-branches() {
     while read -r branch; do git branch --delete --force "$branch"; done
 }
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
 SAVEHIST=10000
 HISTSIZE=10000
 HISTFILE=~/.zsh_history
@@ -129,11 +120,6 @@ zstyle ':completion:*:git-switch:*' sort false
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # preview directory's content with eza when completing cd
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-#
-# Do preview in tmux popup when available
-# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-# Extra padding to make space for preview in tmux popup
-# zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
 
 if ! zplug check; then
     zplug install

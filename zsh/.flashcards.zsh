@@ -31,6 +31,10 @@ typeset -ga FLASHCARDS=(
   "Ctrl-R|fzf fuzzy history search"
   "Ctrl-T|fzf fuzzy file picker"
   "Alt-C|fzf fuzzy cd"
+  "** + Tab|fzf-powered completion anywhere: cd **⭾, kill **⭾, ssh **⭾"
+  "cd - / cd -N|jump back through your cd history (auto_pushd; cd - lists stack)"
+  "gco gca gp gl|oh-my-zsh git plugin aliases: checkout, commit --amend, push, pull"
+  "flash -l / -q|list every card / quiz mode (FLASH_QUIET=1 silences startup card)"
   "delta|git diff/log -p are paged through delta; n/N jump between files"
 )
 
